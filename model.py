@@ -2,14 +2,15 @@ import os
 import numpy as np
 from PIL import Image
 from sklearn.preprocessing import LabelEncoder
+# from sklearn.model_selection import train_test_split # Diese Zeile entfernen wir
 from tensorflow.keras.utils import to_categorical
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization
+from tensorflow.keras.layers import GlobalAveragePooling2D
+from tensorflow.keras.optimizers import Adam
 import matplotlib.pyplot as plt
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.callbacks import ModelCheckpoint
-from tensorflow.keras.models import load_model
+import pickle
 
 # Load the data and label them
 def load_data(txt_path, image_folders):
@@ -39,109 +40,135 @@ def load_data(txt_path, image_folders):
             
     return np.array(images), np.array(labels)
 
-test_folders = ["data/Generation_2", "data/Generation_4"]
-train_folders = ["data/Generation_3", "data/Generation_5"]
+# Random Cropping: Crop zufälligen Ausschnitt und rescale auf 96x96
+def random_crop(img, crop_size=(72, 72)):
+    img = tf.convert_to_tensor(img)
+    cropped_img = tf.image.random_crop(img, size=(crop_size[0], crop_size[1], 3))
+    return tf.image.resize(cropped_img, [96, 96])
 
-# Daten laden
-test_images, test_labels = load_data("test_data.txt", test_folders)
-train_images, train_labels = load_data("train_data.txt", train_folders)
+# Generator, der Crops erzeugt (für Training)
+def crop_generator(images, labels, batch_size=32, crop_size=(72, 72)):
+    # Der Generator wählt zufällig Bilder aus den gesamten Daten aus
+    while True:
+        idx = np.random.choice(len(images), batch_size)
+        batch_x = []
+        batch_y = []
+        for i in idx:
+            # Hier findet das Cropping und die Normalisierung statt
+            cropped = random_crop(images[i] / 255.0, crop_size)
+            batch_x.append(cropped.numpy())
+            batch_y.append(labels[i])
+        yield np.array(batch_x), np.array(batch_y)
 
-# Label-Encoding, weist jedem Label eine eindeutige Zahl zu
+# Validation Generator (ohne Cropping)
+def val_generator(images, labels, batch_size=32):
+    # Der Generator wählt zufällig Bilder aus den gesamten Daten aus
+    while True:
+        idx = np.random.choice(len(images), batch_size)
+        # Hier findet nur die Normalisierung statt, kein Cropping
+        batch_x = images[idx] / 255.0
+        batch_y = labels[idx]
+        yield batch_x, batch_y
+
+
+all_folders = ["data/Generation_2", "data/Generation_3", "data/Generation_4", "data/Generation_5"]
+
+# Alle Daten laden
+all_images, all_labels = load_data("all_data.txt", all_folders)
+print(f"Geladene Bilder: {len(all_images)}")
+print(f"Geladene Labels: {len(all_labels)}")
+
+# Label-Encoding auf alle Labels
 encoder = LabelEncoder()
-train_labels_enc = encoder.fit_transform(train_labels)
-test_labels_enc = encoder.transform(test_labels)
+all_labels_enc = encoder.fit_transform(all_labels)
 
-# One-hot-Encoding, wandelt die Labels in ein binäres Matrixformat um
+# One-hot-Encoding
 num_classes = len(encoder.classes_)
-train_labels_cat = to_categorical(train_labels_enc, num_classes)
-test_labels_cat = to_categorical(test_labels_enc, num_classes)
+all_labels_cat = to_categorical(all_labels_enc, num_classes)
 
-# Modell erstellen, Dropout erhöht die Robustheit gegen Overfitting
+
+# Modell erstellen
 model = Sequential([
     Conv2D(32, (3, 3), activation='relu', input_shape=(96, 96, 3)),
     BatchNormalization(),
+    Conv2D(32, (3, 3), activation='relu'),
     MaxPooling2D((2, 2)),
 
     Conv2D(64, (3, 3), activation='relu'),
     BatchNormalization(),
+    Conv2D(64, (3, 3), activation='relu'),
     MaxPooling2D((2, 2)),
+    Dropout(0.25),
 
     Conv2D(128, (3, 3), activation='relu'),
     BatchNormalization(),
+    Conv2D(128, (3, 3), activation='relu'),
     MaxPooling2D((2, 2)),
 
-    Flatten(),
-    Dropout(0.6),
+    GlobalAveragePooling2D(),
     Dense(256, activation='relu'),
+    Dropout(0.5),
     Dense(num_classes, activation='softmax')
 ])
 
+# Optimizer definieren
+optimizer = Adam(learning_rate=0.001)
+
 # Modell kompilieren
-model.compile(optimizer='adam',
+model.compile(optimizer=optimizer,
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-# Modell-Übersicht anzeigen
 model.summary()
 
-"""
-# Datenaugmentation für Trainingsdaten
-# Dies hilft, das Modell robuster zu machen, indem es verschiedene Transformationen der Bilder anwendet
-datagen = ImageDataGenerator(
-    rotation_range=10,           # kleine Drehungen
-    width_shift_range=0.05,      # max 5%
-    height_shift_range=0.05,
-    zoom_range=0.1,              # leichtes Rein-/Rauszoomen
-    brightness_range=[0.9, 1.1], # kaum sichtbar heller/dunkler
-    horizontal_flip=True,        # manchmal sinnvoll bei Symmetrie
-    fill_mode='nearest'
-)
-"""
+# Generatoren erstellen - jetzt beide basierend auf den kompletten Daten
+train_gen = crop_generator(all_images, all_labels_cat, batch_size=32, crop_size=(72, 72))
+val_gen = val_generator(all_images, all_labels_cat, batch_size=32)
 
-"""
-checkpoint_cb = ModelCheckpoint(
-    filepath="saved_models/pokemon_classifier.keras",
-    save_best_only=True,
-    monitor="val_accuracy",
-    mode="max",
-    verbose=1
-)
 
-model = load_model("saved_models/pokemon_classifier.keras")
-"""
-"""
+# Gesamtanzahl der Bilder
+total_samples = len(all_images)
+batch_size = 32
+
+# Angenommen, du möchtest 80% der Daten für "Trainingsschritte" und 20% für "Validierungsschritte" nutzen.
+train_steps_per_epoch = int(0.8 * total_samples) // batch_size
+val_steps_per_epoch = int(0.2 * total_samples) // batch_size
+
+# Stelle sicher, dass du mindestens einen Schritt hast, um Fehler zu vermeiden, falls total_samples sehr klein ist
+if train_steps_per_epoch == 0:
+    train_steps_per_epoch = 1
+if val_steps_per_epoch == 0:
+    val_steps_per_epoch = 1
+
+print(f"Trainingsschritte pro Epoche: {train_steps_per_epoch}")
+print(f"Validierungsschritte pro Epoche: {val_steps_per_epoch}")
+
+
 # Modell trainieren
-model.fit(datagen.flow(train_images/255.0, train_labels_cat, batch_size=32),
-          validation_data=(test_images/255.0, test_labels_cat), 
-          epochs=10)
-"""
-#Modell trainieren
-model.fit(train_images/255.0, train_labels_cat, 
-          validation_split=0.1, 
-          epochs=10, batch_size=32)
-
+model.fit(
+    train_gen,
+    steps_per_epoch=train_steps_per_epoch,
+    validation_data=val_gen,
+    validation_steps=val_steps_per_epoch,
+    epochs=10
+)
 
 # Modell speichern
 model.save(os.path.join("saved_models", "pokemon_classifier.keras"))
 
 # Label-Encoder speichern
-import pickle
 with open("saved_models/label_encoder.pkl", "wb") as f:
     pickle.dump(encoder, f)
 
 
-# Modell evaluieren
-test_loss, test_accuracy = model.evaluate(test_images/255.0, test_labels_cat)
-print(f"Test Loss: {test_loss:.4f}, Test Accuracy: {test_accuracy:.4f}")
-
-
-# Plot Beispielbild mit Real- und Vorhersage-Label im Titel
-idx = np.random.randint(len(test_images))
-img = test_images[idx]
+# Beispielbild mit Vorhersage plotten
+# Wähle ein zufälliges Bild aus den gesamten Daten für die Vorhersage
+idx = np.random.randint(len(all_images))
+img = all_images[idx]
 pred = model.predict(np.expand_dims(img / 255.0, axis=0))
 predicted_label = encoder.inverse_transform([np.argmax(pred)])
 
 plt.imshow(img)
 plt.axis('off')
-plt.title(f"Real: {test_labels[idx]} | Predicted: {predicted_label[0]}")
+plt.title(f"Real: {encoder.inverse_transform([np.argmax(all_labels_cat[idx])])[0]} | Predicted: {predicted_label[0]}")
 plt.show()
