@@ -134,12 +134,6 @@ batch_size = 32
 train_steps_per_epoch = int(0.8 * total_samples) // batch_size
 val_steps_per_epoch = int(0.2 * total_samples) // batch_size
 
-# Stelle sicher, dass du mindestens einen Schritt hast, um Fehler zu vermeiden, falls total_samples sehr klein ist
-if train_steps_per_epoch == 0:
-    train_steps_per_epoch = 1
-if val_steps_per_epoch == 0:
-    val_steps_per_epoch = 1
-
 print(f"Trainingsschritte pro Epoche: {train_steps_per_epoch}")
 print(f"Validierungsschritte pro Epoche: {val_steps_per_epoch}")
 
