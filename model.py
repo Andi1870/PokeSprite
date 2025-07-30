@@ -144,7 +144,7 @@ model.fit(
     steps_per_epoch=train_steps_per_epoch,
     validation_data=val_gen,
     validation_steps=val_steps_per_epoch,
-    epochs=10
+    epochs=100
 )
 
 # Modell speichern
