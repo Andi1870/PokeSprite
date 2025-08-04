@@ -6,6 +6,7 @@ __pycache__/
 # Environment
 venv/
 .env
+ml-env/
 
 # VS Code
 .vscode/

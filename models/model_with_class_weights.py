@@ -40,11 +40,6 @@ def load_data(data_folder):
         match = label_pattern.match(filename)
         if match:
             label = match.group(1).lower()
-            continue
-
-        match = label_pattern.match(filename)
-        if match:
-            label = match.group(1).lower()
             
             path = os.path.join(data_folder, filename)
             try:
@@ -143,10 +138,15 @@ model.summary()
 model.fit(
     train_images, train_labels_cat,
     validation_data=(val_images, val_labels_cat),
-    epochs=10,
+    epochs=50,
     batch_size=32,
     class_weight=class_weight_dict
 )
+
+test_loss, test_accuracy = model.evaluate(test_images, test_labels_cat)
+
+print(f"Test Loss: {test_loss:.4f}")
+print(f"Test Accuracy: {test_accuracy:.4f}")
 
 # Save model
 os.makedirs("saved_models", exist_ok=True)

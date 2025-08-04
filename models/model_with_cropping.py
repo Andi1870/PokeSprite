@@ -167,6 +167,11 @@ model.fit(
     epochs=50
 )
 
+test_loss, test_accuracy = model.evaluate(test_images, test_labels_cat)
+
+print(f"Test Loss: {test_loss:.4f}")
+print(f"Test Accuracy: {test_accuracy:.4f}")
+
 # Save model
 os.makedirs("saved_models", exist_ok=True)
 model.save(os.path.join("saved_models", "pokemon_classifier_cropping.keras"))

@@ -10,7 +10,7 @@ with open("saved_models/label_encoder_cropping.pkl", "rb") as f:
     encoder = pickle.load(f)
 
 # Specify the path to the image you want to predict
-image_path = r"data\abomasnow8.jpg"
+image_path = r"data\abra5.jpg"
 
 # Load the image (assuming it's already 96x96 and RGB)
 img = Image.open(image_path)
