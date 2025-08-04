@@ -37,9 +37,15 @@ The goal of this project is to train a machine learning model that can accuratel
 
 ## Training
 - Train the model using the provided script `model_with_class_weights.py` or `model_with_cropping.py`
-- **model_with_class_weights.py** uses the CNN with class weights and without cropping
-- **model_with_cropping.py** uses the CNN without class weights and only with cropping
+- `model_with_class_weights.py` uses the CNN with class weights and without cropping
+- `model_with_cropping.py` uses the CNN without class weights and only with cropping
 - Options may include batch size, learning rate, optimizer, and epochs
+
+---
+
+## Example Results
+- **model_with_class_weights**: `Test Accuracy: 0.7750` `Test Loss: 1.0221`
+- **model_with_cropping**: `Test Accuracy: 0.0045` `Test Loss: 12405.3652` (do again)
 
 ---
 
