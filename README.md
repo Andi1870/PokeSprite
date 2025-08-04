@@ -20,7 +20,7 @@ The goal of this project is to train a machine learning model that can accuratel
 - **Preprocessing**:
   - Load the data with `data_loader.py`
   - Check the sizes of the images with `check_sizes.py`
-  - Check classes that are very rare with `class_count_check.py` and `class_distribution.py`
+  - Check classes that are very rare with `class_count_check.py` and `class_distribution.py` (showing distribtion only works after `format_change.py`)
   - To ensure consitency: Resize to **96x96 pixels**, edit the background to white, delete classes with less than 3 images (is needed for splitting the data into training, validation and test sets) and change every image to **RGB** using `format_change.py`
   - Labels will be loaded in the model script
 
@@ -46,7 +46,7 @@ The goal of this project is to train a machine learning model that can accuratel
 ## Structure
 
 - `models/` - Scripts to train a model with class weights or cropping
-- `saved_models/` - Can be used to test the model without going through another training
+- `saved_models/` - Can be used to test the model without going through another training (both models are trained with 50 epochs)
 - `scripts/` – Python scripts for loading data, changing format, etc.
 - `requirements.txt` – List of required Python packages
 
