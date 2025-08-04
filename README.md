@@ -20,7 +20,7 @@ The goal of this project is to train a machine learning model that can accuratel
 - **Preprocessing**:
   - Load the data with `data_loader.py`
   - Check the sizes of the images with `check_sizes.py`
-  - Check classes that are very rare with `class_count_check.py` and `class_distribution.py` (showing distribtion only works after `format_change.py`)
+  - Check classes that are very rare with`class_distribution.py` (only works after `format_change.py`)
   - To ensure consitency: Resize to **96x96 pixels**, edit the background to white, delete classes with less than 3 images (is needed for splitting the data into training, validation and test sets) and change every image to **RGB** using `format_change.py`
   - Labels will be loaded in the model script
 
