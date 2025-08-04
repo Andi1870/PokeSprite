@@ -138,7 +138,7 @@ def process_and_clean_single_folder(input_folder_path, min_members=3):
     print(f"  Processed: {processed_count} | Deleted: {deleted_count} | Skipped: {skipped_count} | Errors: {error_count}")
 
 
-base_input_path = "./big_data"
+base_input_path = "./data"
 
 print("--- START: Data Cleaning & Image Preparation ---")
 

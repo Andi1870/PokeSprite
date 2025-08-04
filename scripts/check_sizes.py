@@ -47,7 +47,7 @@ def count_image_sizes(folder_path):
 
 
 # Define the image folder
-image_folder = "./big_data"
+image_folder = "./data"
 
 # Call the counting function
 sizes = count_image_sizes(image_folder)

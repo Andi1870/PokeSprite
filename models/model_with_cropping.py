@@ -82,7 +82,7 @@ def val_generator(images, labels, batch_size=32):
             yield batch_x, batch_y
 
 
-data_folder = "./big_data"
+data_folder = "./data"
 
 # Load all data
 all_images, all_labels = load_data(data_folder)

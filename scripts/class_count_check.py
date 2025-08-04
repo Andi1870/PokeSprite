@@ -3,7 +3,7 @@ import sys
 import re
 from collections import Counter
 
-def find_low_count_classes(image_folders, min_count_to_print=2):
+def find_low_count_classes(image_folders, min_count_to_print):
     """
     Searches specified folders, counts the number of images per class,
     and outputs classes that fall below a certain threshold.
@@ -73,10 +73,10 @@ def find_low_count_classes(image_folders, min_count_to_print=2):
     return class_counts
 
 # Define the folders to check
-image_folders_to_check = "./big_data"
+image_folders_to_check = "./data"
 
 # Set the minimum value for the number of images per class
 MINIMUM_IMAGES_PER_CLASS = 3
 
 # Call the function to find and print low count classes
-find_low_count_classes(image_folders_to_check, min_count_to_print=MINIMUM_IMAGES_PER_CLASS)
+find_low_count_classes(image_folders_to_check, MINIMUM_IMAGES_PER_CLASS)

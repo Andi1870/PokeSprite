@@ -60,7 +60,7 @@ def load_data(data_folder):
     return np.array(images), np.array(labels)
 
 # Determine data folder
-data_folder = "./big_data"
+data_folder = "./data"
 
 # Load all data
 all_images, all_labels = load_data(data_folder)

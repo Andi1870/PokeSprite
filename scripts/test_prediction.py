@@ -4,13 +4,13 @@ import numpy as np
 import pickle
 
 # Load the trained model and label encoder
-model = load_model("saved_models/pokemon_classifier.keras")
+model = load_model("saved_models/pokemon_classifier_cropping.keras")
 
-with open("saved_models/label_encoder.pkl", "rb") as f:
+with open("saved_models/label_encoder_cropping.pkl", "rb") as f:
     encoder = pickle.load(f)
 
 # Specify the path to the image you want to predict
-image_path = r"big_data\abomasnow8.jpg"
+image_path = r"data\abomasnow8.jpg"
 
 # Load the image (assuming it's already 96x96 and RGB)
 img = Image.open(image_path)

@@ -7,7 +7,7 @@ path = kagglehub.dataset_download("jackemartin/pokemon-sprites")
 print("Path to dataset files:", path)
 
 # Define the target directory
-target_dir = "./big_data"
+target_dir = "./data"
 
 # Make sure the target directory exists
 os.makedirs(target_dir, exist_ok=True)
