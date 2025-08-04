@@ -92,5 +92,8 @@ You can set up your environment using `venv`.
 
 ## License & Disclaimer
 
-This project is for educational and research purposes only.
-All Pokémon assets and sprites are the property of Nintendo, Game Freak, and The Pokémon Company.
+This repository contains **only code** for Pokémon sprite recognition using machine learning.  
+It does **not** include any copyrighted Pokémon sprites.
+
+All code is licensed under the MIT License (see [LICENSE](./LICENSE)).  
+All Pokémon-related content (names, images, sprites) is the property of **Nintendo**, **Game Freak**, and **The Pokémon Company**, and is used only for **educational and research purposes**.
