@@ -62,7 +62,6 @@ The goal of this project is to train a machine learning model that can accuratel
 
 You can set up your environment using `venv`.
 
----
 
 ### Using `venv` (Python 3.10 recommended)
 
