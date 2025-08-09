@@ -20,8 +20,8 @@ The goal of this project is to train a machine learning model that can accuratel
 - **Preprocessing**:
   - Load the data with `data_loader.py`
   - Check the sizes of the images with `check_sizes.py`
-  - See twith`class_distribution.py` (only works after `format_change.py`)
-  - To ensure consitency: Resize to **96x96 pixels**, edit the background to white, delete classes with less than 3 images (is needed for splitting the data into training, validation and test sets) and change every image to **RGB** using `format_change.py`
+  - To ensure consistency: Resize to **96x96 pixels**, edit the background to white, delete classes with less than 3 images (is needed for splitting the data into training, validation and test sets) and change every image to **RGB** using `format_change.py`
+  - See the overall class distribution with `class_distribution.py` (only works after `format_change.py`)
   - Labels will be loaded in the model script
 
 ---
@@ -36,23 +36,21 @@ The goal of this project is to train a machine learning model that can accuratel
 ---
 
 ## Training
-- Train the model using the provided script `model_with_class_weights.py` or `model_with_cropping.py`
-- `model_with_class_weights.py` uses the CNN with class weights and without cropping
-- `model_with_cropping.py` uses the CNN without class weights and only with cropping
+- Train the model using the provided script `model_with_class_weights.py`
+- `model_with_class_weights.py` uses the CNN with class weights
 - Options may include batch size, learning rate, optimizer, and epochs
 
 ---
 
 ## Example Results
-- **model_with_class_weights**: `Test Accuracy: 0.7750` `Test Loss: 1.0221`
-- **model_with_cropping**: `Test Accuracy: 0.0045` `Test Loss: 12405.3652` (do again)
+- **model_with_class_weights**: `Test Accuracy: 0.8722` `Test Loss: 0.7378`
 
 ---
 
 ## Structure
 
-- `models/` - Scripts to train a model with class weights or cropping
-- `saved_models/` - Can be used to test the model without going through another training (both models are trained with 50 epochs)
+- `models/` - Scripts to train a model with class weights
+- `saved_models/` - Can be used to test the model without going through another training (trained with 100 epochs)
 - `scripts/` – Python scripts for loading data, changing format, etc.
 - `requirements.txt` – List of required Python packages
 

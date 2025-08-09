@@ -1,25 +1,53 @@
-from tensorflow.keras.models import load_model
-from PIL import Image
+import os
+import random
 import numpy as np
 import pickle
+import re
+from PIL import Image
+import matplotlib.pyplot as plt
+from tensorflow.keras.models import load_model
 
-# Load the trained model and label encoder
-model = load_model("saved_models/pokemon_classifier_cropping.keras")
+# Load model and label encoder
+model = load_model("saved_models/pokemon_classifier_class_weights.keras")
 
-with open("saved_models/label_encoder_cropping.pkl", "rb") as f:
+with open("saved_models/label_encoder_class_weights.pkl", "rb") as f:
     encoder = pickle.load(f)
 
-# Specify the path to the image you want to predict
-image_path = r"data\abra5.jpg"
+# Load all image files
+data_folder = "./data"
+image_files = [f for f in os.listdir(data_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
 
-# Load the image (assuming it's already 96x96 and RGB)
-img = Image.open(image_path)
-img_array = np.array(img) / 255.0  # Normalize
-img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+# Select 10 random images
+random_files = random.sample(image_files, 10)
 
-# Make prediction
-prediction = model.predict(img_array)
-predicted_index = np.argmax(prediction)
-predicted_label = encoder.inverse_transform([predicted_index])[0]
+# Prepare figure
+plt.figure(figsize=(15, 6))
 
-print(f"Predicted Pokémon: {predicted_label}")
+for i, file in enumerate(random_files):
+    image_path = os.path.join(data_folder, file)
+
+    # Load and preprocess image
+    img = Image.open(image_path)
+    img_array = np.array(img) / 255.0
+    input_array = np.expand_dims(img_array, axis=0)
+
+    # Prediction
+    prediction = model.predict(input_array, verbose=0)
+    predicted_index = np.argmax(prediction)
+    predicted_label = encoder.inverse_transform([predicted_index])[0]
+
+    # Extract true label from filename
+    match = re.match(r'^([a-zA-Z]+)', file)
+    true_label = match.group(1).lower() if match else "(unbekannt)"
+
+    # Set title color: green = correct, red = wrong
+    title_color = 'green' if predicted_label == true_label else 'red'
+
+    # Plot image
+    plt.subplot(2, 5, i + 1)
+    plt.imshow(img)
+    plt.axis('off')
+    plt.title(f"T: {true_label}\nP: {predicted_label}", color=title_color)
+
+plt.tight_layout()
+plt.show()

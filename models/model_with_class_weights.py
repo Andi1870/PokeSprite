@@ -138,7 +138,7 @@ model.summary()
 model.fit(
     train_images, train_labels_cat,
     validation_data=(val_images, val_labels_cat),
-    epochs=50,
+    epochs=100,
     batch_size=32,
     class_weight=class_weight_dict
 )
