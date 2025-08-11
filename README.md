@@ -39,6 +39,7 @@ The goal of this project is to train a machine learning model that can accuratel
 - Train the model using the provided script `model_with_class_weights.py`
 - `model_with_class_weights.py` uses the CNN with class weights
 - Options may include batch size, learning rate, optimizer, and epochs
+- Use `test_prediction.py` with the saved model and label encoder to test the model without going through a training iteration
 
 ---
 
