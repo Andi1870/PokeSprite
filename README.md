@@ -65,17 +65,17 @@ You can set up your environment using `venv`.
 
 1. **Create virtual environment**:
    ```bash
-   python -m venv ml-env
+   python3.10 -m venv venv
    ```
 
 2. **Activate the environment**:
    - On macOS/Linux:
      ```bash
-     source ml-env/bin/activate
+     source venv/bin/activate
      ```
    - On Windows:
      ```bash
-     .\ml-env\Scripts\activate
+     .\venv\Scripts\activate
      ```
 
 3. **Install requirements**:
@@ -83,7 +83,9 @@ You can set up your environment using `venv`.
    pip install --upgrade pip
    pip install -r requirements.txt
    ```
-   
+
+**Make sure that the venv is selected as the interpreter**
+
 ---
 
 ## Notes
