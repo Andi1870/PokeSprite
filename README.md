@@ -65,7 +65,7 @@ You can set up your environment using `venv`.
 
 1. **Create virtual environment**:
    ```bash
-   python3 -m venv ml-env
+   python -m venv ml-env
    ```
 
 2. **Activate the environment**:
@@ -80,8 +80,8 @@ You can set up your environment using `venv`.
 
 3. **Install requirements**:
    ```bash
-   pip3 install --upgrade pip
-   pip3 install -r requirements.txt
+   pip install --upgrade pip
+   pip install -r requirements.txt
    ```
    
 ---
